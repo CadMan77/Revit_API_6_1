@@ -1,0 +1,16 @@
+﻿<Window x:Class="Revit_API_6_1.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Revit_API_6_1"
+             mc:Ignorable="d" 
+             Height="150" Width="300"
+             Title="6.1 Создание воздуховода">
+    <StackPanel Margin="5">
+        <Label Content="Выберите тип"/>
+        <ComboBox ItemsSource="{Binding ProjectDuctTypes}" SelectedItem="{Binding SelectedDuctType}" DisplayMemberPath="Name"/>
+        <Label Content="Выберите уровень"/>
+        <ComboBox ItemsSource="{Binding ProjectLevels}" SelectedItem="{Binding SelectedLevel}" DisplayMemberPath="Name"/>
+    </StackPanel>
+</Window>
