@@ -6,56 +6,81 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Revit_API_6_1
 {
     public class MainViewViewModel
     {
-        private ExternalCommandData _commandData;
-        private UIDocument _uidoc;
-        private Document _doc;
+        private ExternalCommandData _сommandData;
+        private UIDocument uidoc;
+        private Document doc;
 
-        //public List<Wall> SelectedWalls { get; set; }
-        public List<DuctType> ProjectDuctTypes { get; set; }
-        public DuctType SelectedDuctType { get; set; }
-        public DelegateCommand SetDuctTypeCommand { get; }
+        //public List<DuctType> ProjectDuctTypes { get; set; }
+        public List<DuctType> ProjectDuctTypes { get; } = new List<DuctType>();
 
-        public List<Level> ProjectLevels { get; set; }
-        public Level SelectedLevel { get; set; }
-        public DelegateCommand SetLevelCommand { get; }
+        //public List<Level> ProjectLevels { get; set; }
+        public List<Level> ProjectLevels { get; } = new List<Level>();
+
+        public DuctType SelectedDuctType { get; set; } = null;
+        public Level SelectedLevel { get; set; } = null;
+
+        static readonly string intMask = @"^\-?\d+$";
+        readonly Regex intRGX = new Regex(intMask);
+
+
+        public int DuctOffset { get; } = 2500;
+
+        //private int ductOffset;
+        //public int DuctOffset
+        //{
+        //    get => ductOffset;
+        //    set
+        //    {
+        //        if (value != 0 && intRGX.IsMatch(value.ToString()))
+        //        {
+        //            ductOffset = value;
+        //        }
+        //    }
+        //}
+
+        public DelegateCommand CreateCommand { get; }
 
         public MainViewViewModel(ExternalCommandData commandData)
         {
-            _commandData = commandData;
-            _uidoc = _commandData.Application.ActiveUIDocument;
-            _doc = _uidoc.Document;
+            _сommandData = commandData;
+            doc = commandData.Application.ActiveUIDocument.Document;
 
-            List<DuctType> projectDuctTypes = new FilteredElementCollector(_doc)
-                .OfCategory(BuiltInCategory.OST_DuctCurves)
-                .WhereElementIsElementType()
+            List<DuctType> projectDuctTypes = new FilteredElementCollector(doc)
+                .OfClass(typeof(DuctType))
                 .Cast<DuctType>()
                 .ToList();
 
             ProjectDuctTypes = projectDuctTypes;
 
-            List<Level> projectLevels = new FilteredElementCollector(_doc)
-                .OfCategory(BuiltInCategory.OST_Levels)
-                .WhereElementIsNotElementType()
+            List<Level> projectLevels = new FilteredElementCollector(doc)
+                .OfClass(typeof(Level))
                 .Cast<Level>()
                 .ToList();
 
             ProjectLevels = projectLevels;
 
+            //DuctOffset = 2500; // "Стандартное" значение высоты монтажа воздуховодов, мм
+
+            //CreateCommand = new DelegateCommand(OnCreateCommand);
+
+            //List<Reference> pointRefs = uidoc.Selection.PickObjects(Point);
+
             //try
             //{
-            //    IList<Reference> selectedWallRefList = _uidoc.Selection.PickObjects(ObjectType.Element, new WallFilter(), "Выберите стены:");
+            //    IList<Reference> selectedWallRefList = Uidoc.Selection.PickObjects(ObjectType.Element, new WallFilter(), "Выберите стены:");
 
             //    List<Wall> selectedWalls = new List<Wall>();
 
             //    foreach (Reference selectedRef in selectedWallRefList)
             //    {
-            //        Wall wall = _doc.GetElement(selectedRef) as Wall;
+            //        Wall wall = doc.GetElement(selectedRef) as Wall;
             //        selectedWalls.Add(wall);
             //    }
 
@@ -75,14 +100,16 @@ namespace Revit_API_6_1
             //}
         }
 
-        private void OnSetDuctTypeCommand()
+        private void OnCreateCommand()
         {
-            //if (SelectedWalls.Count == 0)
-            //{
-            //    return;
-            //}
+            
+            
+            if (SelectedDuctType == null || SelectedLevel == null)
+            {
+                return;
+            }
 
-            using (Transaction ts = new Transaction(_doc, "Set Wall Type Transaction"))
+            using (Transaction ts = new Transaction(doc, "Set Wall Type Transaction"))
             {
                 ts.Start();
 
@@ -98,8 +125,8 @@ namespace Revit_API_6_1
 
             //TaskDialog.Show("Выполнено", $"Тип выбранных стен ({SelectedWalls.Count} шт.) успешно изменен на \"{SelectedWallType.Name}\".");
 
-            //_uidoc.Selection.Dispose();
-            //_uidoc.RefreshActiveView();
+            //Uidoc.Selection.Dispose();
+            //Uidoc.RefreshActiveView();
         }
 
         public event EventHandler CloseRequest;

@@ -5,12 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Revit_API_6_1"
              mc:Ignorable="d" 
-             Height="150" Width="300"
-             Title="6.1 Создание воздуховода">
-    <StackPanel Margin="5">
-        <Label Content="Выберите тип"/>
-        <ComboBox ItemsSource="{Binding ProjectDuctTypes}" SelectedItem="{Binding SelectedDuctType}" DisplayMemberPath="Name"/>
-        <Label Content="Выберите уровень"/>
-        <ComboBox ItemsSource="{Binding ProjectLevels}" SelectedItem="{Binding SelectedLevel}" DisplayMemberPath="Name"/>
+             Height="240" Width="325" MinHeight="240" MinWidth="325"
+             Title="Создание воздуховода (Задание 6.1)"
+             WindowStartupLocation="CenterScreen">    <!--WindowStartupLocation="CenterOwner"-->               
+    <StackPanel Margin="1">
+        <Label Content="Тип"/>
+        <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectDuctTypes}" DisplayMemberPath="Name"
+                  SelectedValue="{Binding SelectedDuctType}"/><!--SelectedItem="{Binding SelectedDuctType}"/>-->
+        
+        <Label Content="Уровень"/>
+        <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectLevels}" DisplayMemberPath="Name" 
+                  SelectedValue="{Binding SelectedLevel}"/><!--SelectedItem="{Binding SelectedLevel}"/>-->
+
+        <Label Content="Смещение, см"/>
+        <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/><!--RBS_OFFSET_PARAM-->
+
+        <Button Content="  Создать  " HorizontalAlignment="Center" Command="{Binding CreateCommand}"/>
+        <!--Enabled ONLY if both ComboBoxItems are set and offset value is integer -->
     </StackPanel>
 </Window>
