@@ -29,8 +29,8 @@ namespace Revit_API_6_1
         static readonly string intMask = @"^\-?\d+$";
         readonly Regex intRGX = new Regex(intMask);
 
-
-        public int DuctOffset { get; } = 2500;
+        public int DuctOffset { get; }
+        //public int DuctOffset { get; set; } = 2500;
 
         //private int ductOffset;
         //public int DuctOffset
@@ -66,7 +66,7 @@ namespace Revit_API_6_1
 
             ProjectLevels = projectLevels;
 
-            //DuctOffset = 2500; // "Стандартное" значение высоты монтажа воздуховодов, мм
+            DuctOffset = 2500; // "Стандартное" значение высоты монтажа воздуховодов, мм
 
             //CreateCommand = new DelegateCommand(OnCreateCommand);
 
