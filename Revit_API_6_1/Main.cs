@@ -2,8 +2,11 @@
 // Тип воздуховода и базовый уровень его расположения должны выбираться из выпадающего списка.
 // Смещение воздуховода (значение параметра "Отметка посередине") задаётся с помощью ввода значения в окне.
 // PS: Значения прочих параметров - произвольные
-// Например, для параметра "Тип системы" можно взять значение "Supply Air" (Id=712974)
-// ElementId ei = new ElementId(712974)
+// Например, для параметра "Тип системы" можно взять значение "Supply Air"
+// MEPSystemType systemType = new FilteredElementCollector(doc)
+//   .OfClass(typeof(MEPSystemType))
+//   .Cast<MEPSystemType>()
+//   .FirstOrDefault(m => m.SystemClassification == MEPSystemClassification.SupplyAir);
 
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
