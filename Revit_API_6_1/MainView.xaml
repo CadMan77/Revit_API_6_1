@@ -7,21 +7,21 @@
              mc:Ignorable="d" 
              Height="240" Width="325" MinHeight="240" MinWidth="325"
              Title="Создание воздуховода (Задание 6.1)"
-             WindowStartupLocation="CenterScreen">    <!--?? WindowStartupLocation="CenterOwner" ??-->               
+             WindowStartupLocation="CenterScreen"> <!--привязать бы к центру окна Revit ("CenterOwner") - вроде как невозможно-->               
     <StackPanel Margin="1">
         <Label Content="Тип"/>
-        <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectDuctTypes}" DisplayMemberPath="Name"
-                  SelectedIndex="0"
-                  SelectedValue="{Binding SelectedDuctType}"/><!--SelectedItem="{Binding SelectedDuctType}"/>-->
+        <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectDuctTypes}" DisplayMemberPath="Name"                  
+                  SelectedValue="{Binding SelectedDuctType}"/><!--какое преимущество перед "SelectedItem"?-->
+                    <!--реализовать значение "по умолчанию" (почему SelectedIndex не влияет?)-->
         
-        <Label Content="Базовый уровень"/> <!--?? Language in-dependent-->
+        <Label Content="Базовый уровень"/> <!--привязать бы к текущей локализации UI Revit-->
         <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectLevels}" DisplayMemberPath="Name" 
-                  SelectedValue="{Binding SelectedLevel}"/><!--SelectedItem="{Binding SelectedLevel}"/>-->
+                  SelectedValue="{Binding SelectedLevel}"/>
 
         <Label Content="Смещение, мм"/>
-        <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/><!--RBS_OFFSET_PARAM-->
+        <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/>
 
         <Button Content="  Создать  " HorizontalAlignment="Center" Command="{Binding CreateCommand}"/>
-        <!--Enabled ONLY if both ComboBoxItems are set and offset value is integer -->
+        <!--привязать доступность кнопки к полноте и корректности значений прочих Control-->
     </StackPanel>
 </Window>

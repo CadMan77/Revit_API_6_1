@@ -18,10 +18,8 @@ namespace Revit_API_6_1
         private UIDocument uidoc;
         private Document doc;
 
-        //public List<DuctType> ProjectDuctTypes { get; set; }
         public List<DuctType> ProjectDuctTypes { get; } = new List<DuctType>();
 
-        //public List<Level> ProjectLevels { get; set; }
         public List<Level> ProjectLevels { get; } = new List<Level>();
 
         public DuctType SelectedDuctType { get; set; } = null;
@@ -30,8 +28,8 @@ namespace Revit_API_6_1
         static readonly string intMask = @"^\-?\d+$";
         readonly Regex intRGX = new Regex(intMask);
 
-        //public int DuctOffset { get; } // !!! "unrecovarable error"
-        //public int DuctOffset { get; set; } = 2500;
+        //public int DuctOffset { get; } // ?? "unrecovarable error"
+        //public int DuctOffset { get; set; } = 2500; // простовато
 
         private int ductOffset;
         public int DuctOffset
@@ -69,13 +67,13 @@ namespace Revit_API_6_1
 
             ProjectLevels = projectLevels;
 
-            DuctOffset = 2500; // "Стандартное" значение высоты монтажа воздуховодов, мм
+            DuctOffset = 2600; // "Стандартное" значение отметки середины воздуховода, мм
 
             CreateCommand = new DelegateCommand(OnCreateCommand);
 
             try
             {
-                point1 = new XYZ(100, 0, 0); // футы?
+                point1 = new XYZ(100, 0, 0); // осторожно - футы!
                 point2 = new XYZ(0, 100, 0);
                 //point1 = uidoc.Selection.PickPoint("Выберите первую точку:");
                 //point2 = uidoc.Selection.PickPoint("Выберите вторую точку:");
