@@ -7,17 +7,18 @@
              mc:Ignorable="d" 
              Height="240" Width="325" MinHeight="240" MinWidth="325"
              Title="Создание воздуховода (Задание 6.1)"
-             WindowStartupLocation="CenterScreen">    <!--WindowStartupLocation="CenterOwner"-->               
+             WindowStartupLocation="CenterScreen">    <!--?? WindowStartupLocation="CenterOwner" ??-->               
     <StackPanel Margin="1">
         <Label Content="Тип"/>
         <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectDuctTypes}" DisplayMemberPath="Name"
+                  SelectedIndex="0"
                   SelectedValue="{Binding SelectedDuctType}"/><!--SelectedItem="{Binding SelectedDuctType}"/>-->
         
-        <Label Content="Уровень"/>
+        <Label Content="Базовый уровень"/> <!--?? Language in-dependent-->
         <ComboBox Margin="5,0,5,10" ItemsSource="{Binding ProjectLevels}" DisplayMemberPath="Name" 
                   SelectedValue="{Binding SelectedLevel}"/><!--SelectedItem="{Binding SelectedLevel}"/>-->
 
-        <Label Content="Смещение, см"/>
+        <Label Content="Смещение, мм"/>
         <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/><!--RBS_OFFSET_PARAM-->
 
         <Button Content="  Создать  " HorizontalAlignment="Center" Command="{Binding CreateCommand}"/>

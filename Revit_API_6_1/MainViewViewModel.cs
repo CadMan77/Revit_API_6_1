@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Mechanical; // Duct
 using Autodesk.Revit.UI;
+using Autodesk.Revit.UI.Selection;
 using Prism.Commands;
 using System;
 using System.Collections.Generic;
@@ -29,21 +30,23 @@ namespace Revit_API_6_1
         static readonly string intMask = @"^\-?\d+$";
         readonly Regex intRGX = new Regex(intMask);
 
-        public int DuctOffset { get; }
+        //public int DuctOffset { get; } // !!! "unrecovarable error"
         //public int DuctOffset { get; set; } = 2500;
 
-        //private int ductOffset;
-        //public int DuctOffset
-        //{
-        //    get => ductOffset;
-        //    set
-        //    {
-        //        if (value != 0 && intRGX.IsMatch(value.ToString()))
-        //        {
-        //            ductOffset = value;
-        //        }
-        //    }
-        //}
+        private int ductOffset;
+        public int DuctOffset
+        {
+            get => ductOffset;
+            set
+            {
+                if (value != 0 && intRGX.IsMatch(value.ToString()))
+                {
+                    ductOffset = value;
+                }
+            }
+        }
+
+        XYZ point1 = null, point2 = null;
 
         public DelegateCommand CreateCommand { get; }
 
@@ -68,65 +71,62 @@ namespace Revit_API_6_1
 
             DuctOffset = 2500; // "Стандартное" значение высоты монтажа воздуховодов, мм
 
-            //CreateCommand = new DelegateCommand(OnCreateCommand);
+            CreateCommand = new DelegateCommand(OnCreateCommand);
 
-            //List<Reference> pointRefs = uidoc.Selection.PickObjects(Point);
+            try
+            {
+                point1 = new XYZ(100, 0, 0); // футы?
+                point2 = new XYZ(0, 100, 0);
+                //point1 = uidoc.Selection.PickPoint("Выберите первую точку:");
+                //point2 = uidoc.Selection.PickPoint("Выберите вторую точку:");
 
-            //try
-            //{
-            //    IList<Reference> selectedWallRefList = Uidoc.Selection.PickObjects(ObjectType.Element, new WallFilter(), "Выберите стены:");
-
-            //    List<Wall> selectedWalls = new List<Wall>();
-
-            //    foreach (Reference selectedRef in selectedWallRefList)
-            //    {
-            //        Wall wall = doc.GetElement(selectedRef) as Wall;
-            //        selectedWalls.Add(wall);
-            //    }
-
-            //    SelectedWalls = selectedWalls;
-
-            //    SetWallTypeCommand = new DelegateCommand(OnSetWallTypeCommand);
-            //}
-            //catch (Autodesk.Revit.Exceptions.OperationCanceledException) // ?? прервать дальнейшее выполнение команды!!
-            //{
-            //    //TaskDialog.Show("Отмена", "Команда прервана пользователем.");
-            //    return;
-            //}
+            }
+            catch (Autodesk.Revit.Exceptions.OperationCanceledException)
+            {
+                return;
+            }
             //catch (Exception ex) // ?? прервать дальнейшее выполнение команды!!
             //{
             //    TaskDialog.Show("Ошибка", $"{ex.Message}");
             //    return;
             //}
+
         }
 
         private void OnCreateCommand()
         {
-            
-            
-            if (SelectedDuctType == null || SelectedLevel == null)
+            if ((point1==null || point2 == null) || SelectedDuctType == null || SelectedLevel == null)
             {
                 return;
             }
 
-            using (Transaction ts = new Transaction(doc, "Set Wall Type Transaction"))
+            //Curve curve = Line.CreateBound(point1, point2);
+
+            //TaskDialog.Show("SupplyAirTypeId", $"{mepSystemType.Id}"); // 712974
+
+            using (Transaction ts = new Transaction(doc, "Create Duct Transaction"))
             {
                 ts.Start();
 
-                //foreach (Wall wall in SelectedWalls)
-                //{
-                //    wall.WallType = SelectedWallType;
-                //}
+                //ElementId ei = new ElementId(712974);
+                //Duct duct = Duct.Create(doc, doc.GetElement(ei).Id, SelectedDuctType.Id, SelectedLevel.Id, point1, point2);
+
+                MEPSystemType mepSystemType = new FilteredElementCollector(doc)
+                    .OfClass(typeof(MEPSystemType))
+                    .Cast<MEPSystemType>()
+                    .FirstOrDefault(m => m.SystemClassification == MEPSystemClassification.SupplyAir);
+                Duct duct = Duct.Create(doc, mepSystemType.Id, SelectedDuctType.Id, SelectedLevel.Id, point1, point2);
+
+                double ductOffsetInFeet = UnitUtils.ConvertToInternalUnits(ductOffset, UnitTypeId.Millimeters);
+
+                duct.get_Parameter(BuiltInParameter.RBS_OFFSET_PARAM).Set(ductOffsetInFeet); // "Отметка посередине"
 
                 ts.Commit();
             }
 
             RaiseCloseRequest();
 
-            //TaskDialog.Show("Выполнено", $"Тип выбранных стен ({SelectedWalls.Count} шт.) успешно изменен на \"{SelectedWallType.Name}\".");
-
-            //Uidoc.Selection.Dispose();
-            //Uidoc.RefreshActiveView();
+            //TaskDialog.Show("Выполнено", "+");
         }
 
         public event EventHandler CloseRequest;
