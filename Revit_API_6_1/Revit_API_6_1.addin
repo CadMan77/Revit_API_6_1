@@ -5,6 +5,6 @@
 		<AddInId>39C8E257-6EF7-4435-A09F-1AE712AEF9E3</AddInId>
 		<FullClassName>Revit_API_6_1.Main</FullClassName>
 		<VendorId>ADSK</VendorId>
-		<Text>Revit API 6-1 Построение инж. системы (воздуховод)</Text>
+		<Text>RevitAPI 6-1 Построение инж. системы (воздуховод)</Text>
 	</AddIn>
 </RevitAddIns>

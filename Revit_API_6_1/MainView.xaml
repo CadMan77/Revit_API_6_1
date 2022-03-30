@@ -19,7 +19,7 @@
                   SelectedValue="{Binding SelectedLevel}"/>
 
         <Label Content="Смещение, мм"/>
-        <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/>
+        <TextBox Margin="5,0,5,10" Text="{Binding DuctOffset}" Height="23" Padding="2"/> <!--ограничить ввод (только integer)-->
 
         <Button Content="  Создать  " HorizontalAlignment="Center" Command="{Binding CreateCommand}"/>
         <!--привязать доступность кнопки к полноте и корректности значений прочих Control-->

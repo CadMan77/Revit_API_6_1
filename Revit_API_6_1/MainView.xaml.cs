@@ -22,7 +22,7 @@ namespace Revit_API_6_1
     public partial class MainView : Window
     {
         public MainView(ExternalCommandData commandData)
-        {            
+        {
             InitializeComponent();
             MainViewViewModel vm = new MainViewViewModel(commandData);
             vm.CloseRequest += (s, e) => this.Close();

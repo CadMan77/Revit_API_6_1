@@ -28,8 +28,7 @@ namespace Revit_API_6_1
         static readonly string intMask = @"^\-?\d+$";
         readonly Regex intRGX = new Regex(intMask);
 
-        //public int DuctOffset { get; } // ?? "unrecovarable error"
-        //public int DuctOffset { get; set; } = 2500; // простовато
+         //public int DuctOffset { get; set; } = 2500; // без защиты от дурака
 
         private int ductOffset;
         public int DuctOffset
@@ -51,7 +50,8 @@ namespace Revit_API_6_1
         public MainViewViewModel(ExternalCommandData commandData)
         {
             _сommandData = commandData;
-            doc = commandData.Application.ActiveUIDocument.Document;
+            uidoc = commandData.Application.ActiveUIDocument;
+            doc = uidoc.Document;
 
             List<DuctType> projectDuctTypes = new FilteredElementCollector(doc)
                 .OfClass(typeof(DuctType))
@@ -73,10 +73,13 @@ namespace Revit_API_6_1
 
             try
             {
-                point1 = new XYZ(100, 0, 0); // осторожно - футы!
-                point2 = new XYZ(0, 100, 0);
-                //point1 = uidoc.Selection.PickPoint("Выберите первую точку:");
-                //point2 = uidoc.Selection.PickPoint("Выберите вторую точку:");
+                #region вариант "зашивки" точек в код
+                //point1 = new XYZ(100, 0, 0); // осторожно - футы!
+                //point2 = new XYZ(0, 100, 0);
+                #endregion
+
+                point1 = uidoc.Selection.PickPoint("Выберите первую точку:");
+                point2 = uidoc.Selection.PickPoint("Выберите вторую точку:");
 
             }
             catch (Autodesk.Revit.Exceptions.OperationCanceledException)
@@ -98,21 +101,24 @@ namespace Revit_API_6_1
                 return;
             }
 
-            //Curve curve = Line.CreateBound(point1, point2);
-
-            //TaskDialog.Show("SupplyAirTypeId", $"{mepSystemType.Id}"); // 712974
+            //Curve curve = Line.CreateBound(point1, point2);            
 
             using (Transaction ts = new Transaction(doc, "Create Duct Transaction"))
             {
                 ts.Start();
 
-                //ElementId ei = new ElementId(712974);
-                //Duct duct = Duct.Create(doc, doc.GetElement(ei).Id, SelectedDuctType.Id, SelectedLevel.Id, point1, point2);
-
                 MEPSystemType mepSystemType = new FilteredElementCollector(doc)
                     .OfClass(typeof(MEPSystemType))
                     .Cast<MEPSystemType>()
                     .FirstOrDefault(m => m.SystemClassification == MEPSystemClassification.SupplyAir);
+
+                #region Эксперимент с прямым использованием ElementId
+                //TaskDialog.Show("SupplyAirTypeId", $"{mepSystemType.Id}");// 712974
+
+                //ElementId ei = new ElementId(712974);
+                //Duct duct = Duct.Create(doc, doc.GetElement(ei).Id, SelectedDuctType.Id, SelectedLevel.Id, point1, point2);
+                #endregion
+
                 Duct duct = Duct.Create(doc, mepSystemType.Id, SelectedDuctType.Id, SelectedLevel.Id, point1, point2);
 
                 double ductOffsetInFeet = UnitUtils.ConvertToInternalUnits(ductOffset, UnitTypeId.Millimeters);
